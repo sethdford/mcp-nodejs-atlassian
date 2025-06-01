@@ -3,7 +3,7 @@
   "displayName": "Atlassian MCP Server",
   "description": "Connect VS Code to Atlassian (Jira/Confluence) via Model Context Protocol for AI-powered workflows",
   "version": "1.0.0",
-  "publisher": "526b8d2d-fe27-4c7e-a276-24671f6afffe",
+  "publisher": "SethFord",
   "engines": {
     "vscode": "^1.74.0"
   },
