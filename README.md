@@ -199,6 +199,297 @@ Example usage in VS Code with Copilot:
 
 > **Note**: MCP integration with GitHub Copilot is evolving. Check the latest VS Code marketplace for MCP extensions and GitHub's documentation for the most current integration methods.
 
+## Creating a VS Code Extension
+
+Want to package this as a VS Code extension for the marketplace? Here's a complete guide:
+
+### Extension Setup
+
+1. **Initialize Extension Structure**
+```bash
+# Install the VS Code extension generator
+npm install -g yo generator-code
+
+# Create new extension
+yo code
+
+# Choose:
+# ? What type of extension do you want to create? New Extension (TypeScript)
+# ? What's the name of your extension? Atlassian MCP Server
+# ? What's the identifier of your extension? atlassian-mcp-server
+# ? What's the description of your extension? Atlassian integration for MCP with Jira and Confluence
+```
+
+2. **Extension Structure**
+```
+your-extension/
+├── package.json              # Extension manifest
+├── src/
+│   ├── extension.ts          # Main extension code
+│   ├── mcpServer.ts         # MCP server management
+│   ├── atlassianProvider.ts # Atlassian API integration
+│   └── webview/             # Configuration UI
+├── media/                   # Icons and images
+├── CHANGELOG.md
+└── README.md
+```
+
+### Key Extension Files
+
+**package.json** (Extension Manifest):
+```json
+{
+  "name": "atlassian-mcp-server",
+  "displayName": "Atlassian MCP Server",
+  "description": "Connect VS Code to Atlassian (Jira/Confluence) via Model Context Protocol",
+  "version": "1.0.0",
+  "publisher": "your-publisher-name",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["atlassian", "jira", "confluence", "mcp", "ai"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "atlassianMcp.configure",
+        "title": "Configure Atlassian MCP",
+        "category": "Atlassian"
+      },
+      {
+        "command": "atlassianMcp.start",
+        "title": "Start MCP Server",
+        "category": "Atlassian"
+      },
+      {
+        "command": "atlassianMcp.stop",
+        "title": "Stop MCP Server",
+        "category": "Atlassian"
+      }
+    ],
+    "configuration": {
+      "title": "Atlassian MCP",
+      "properties": {
+        "atlassianMcp.jiraUrl": {
+          "type": "string",
+          "description": "Jira instance URL"
+        },
+        "atlassianMcp.confluenceUrl": {
+          "type": "string", 
+          "description": "Confluence instance URL"
+        },
+        "atlassianMcp.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start MCP server on VS Code startup"
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "atlassianMcp",
+          "name": "Atlassian MCP",
+          "when": "atlassianMcp.enabled"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@vscode/vsce": "^2.15.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
+```
+
+**src/extension.ts** (Main Extension):
+```typescript
+import * as vscode from 'vscode';
+import { McpServerManager } from './mcpServer';
+import { AtlassianProvider } from './atlassianProvider';
+
+let mcpManager: McpServerManager;
+let atlassianProvider: AtlassianProvider;
+
+export function activate(context: vscode.ExtensionContext) {
+    console.log('Atlassian MCP extension is now active');
+
+    // Initialize managers
+    mcpManager = new McpServerManager(context);
+    atlassianProvider = new AtlassianProvider();
+
+    // Register commands
+    const configureCommand = vscode.commands.registerCommand('atlassianMcp.configure', () => {
+        showConfigurationWebview(context);
+    });
+
+    const startCommand = vscode.commands.registerCommand('atlassianMcp.start', () => {
+        mcpManager.startServer();
+    });
+
+    const stopCommand = vscode.commands.registerCommand('atlassianMcp.stop', () => {
+        mcpManager.stopServer();
+    });
+
+    // Auto-start if enabled
+    const config = vscode.workspace.getConfiguration('atlassianMcp');
+    if (config.get('autoStart')) {
+        mcpManager.startServer();
+    }
+
+    // Register tree data provider
+    const treeDataProvider = new AtlassianTreeProvider(atlassianProvider);
+    vscode.window.createTreeView('atlassianMcp', { treeDataProvider });
+
+    context.subscriptions.push(configureCommand, startCommand, stopCommand);
+}
+
+async function showConfigurationWebview(context: vscode.ExtensionContext) {
+    const panel = vscode.window.createWebviewPanel(
+        'atlassianConfig',
+        'Atlassian MCP Configuration',
+        vscode.ViewColumn.One,
+        { enableScripts: true }
+    );
+
+    panel.webview.html = getConfigurationHtml();
+    
+    // Handle messages from webview
+    panel.webview.onDidReceiveMessage(async (message) => {
+        switch (message.command) {
+            case 'saveConfig':
+                await saveConfiguration(message.config);
+                vscode.window.showInformationMessage('Configuration saved!');
+                break;
+            case 'testConnection':
+                const isValid = await atlassianProvider.testConnection(message.config);
+                panel.webview.postMessage({ 
+                    command: 'connectionResult', 
+                    success: isValid 
+                });
+                break;
+        }
+    });
+}
+
+function getConfigurationHtml(): string {
+    return `<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Atlassian MCP Configuration</title>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            .form-group { margin-bottom: 15px; }
+            label { display: block; margin-bottom: 5px; font-weight: bold; }
+            input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+            button { background: #007acc; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+            button:hover { background: #005a9e; }
+            .oauth-section { background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 15px 0; }
+        </style>
+    </head>
+    <body>
+        <h1>Configure Atlassian MCP Server</h1>
+        
+        <div class="form-group">
+            <label for="jiraUrl">Jira URL:</label>
+            <input type="url" id="jiraUrl" placeholder="https://your-company.atlassian.net">
+        </div>
+        
+        <div class="form-group">
+            <label for="confluenceUrl">Confluence URL:</label>
+            <input type="url" id="confluenceUrl" placeholder="https://your-company.atlassian.net/wiki">
+        </div>
+        
+        <div class="oauth-section">
+            <h3>Authentication Method</h3>
+            <select id="authMethod">
+                <option value="oauth">OAuth 2.0 (Recommended)</option>
+                <option value="token">API Token</option>
+                <option value="pat">Personal Access Token</option>
+            </select>
+            
+            <div id="oauthFields" style="margin-top: 10px;">
+                <button onclick="startOAuthSetup()">Start OAuth Setup Wizard</button>
+            </div>
+            
+            <div id="tokenFields" style="display: none; margin-top: 10px;">
+                <input type="email" id="username" placeholder="your.email@company.com">
+                <input type="password" id="apiToken" placeholder="API Token">
+            </div>
+        </div>
+        
+        <button onclick="testConnection()">Test Connection</button>
+        <button onclick="saveConfiguration()">Save Configuration</button>
+        
+        <div id="status"></div>
+        
+        <script>
+            const vscode = acquireVsCodeApi();
+            
+            document.getElementById('authMethod').addEventListener('change', (e) => {
+                const method = e.target.value;
+                document.getElementById('oauthFields').style.display = method === 'oauth' ? 'block' : 'none';
+                document.getElementById('tokenFields').style.display = method === 'token' ? 'block' : 'none';
+            });
+            
+            function startOAuthSetup() {
+                vscode.postMessage({ command: 'startOAuth' });
+            }
+            
+            function testConnection() {
+                const config = getFormData();
+                vscode.postMessage({ command: 'testConnection', config });
+            }
+            
+            function saveConfiguration() {
+                const config = getFormData();
+                vscode.postMessage({ command: 'saveConfig', config });
+            }
+            
+            function getFormData() {
+                return {
+                    jiraUrl: document.getElementById('jiraUrl').value,
+                    confluenceUrl: document.getElementById('confluenceUrl').value,
+                    authMethod: document.getElementById('authMethod').value,
+                    username: document.getElementById('username').value,
+                    apiToken: document.getElementById('apiToken').value
+                };
+            }
+            
+            window.addEventListener('message', event => {
+                const message = event.data;
+                if (message.command === 'connectionResult') {
+                    const status = document.getElementById('status');
+                    status.innerHTML = message.success ? 
+                        '<p style="color: green;">✅ Connection successful!</p>' : 
+                        '<p style="color: red;">❌ Connection failed. Check your credentials.</p>';
+                }
+            });
+        </script>
+    </body>
+    </html>`;
+}
+
+export function deactivate() {
+    if (mcpManager) {
+        mcpManager.stopServer();
+    }
+}
+
 ## Available Tools
 
 ### Confluence Tools
