@@ -7,6 +7,7 @@
   "engines": {
     "vscode": "^1.74.0"
   },
+  "license": "MIT",
   "categories": ["Other", "Machine Learning"],
   "keywords": ["atlassian", "jira", "confluence", "mcp", "ai", "copilot", "productivity", "project-management", "developer-tools"],
   "activationEvents": [

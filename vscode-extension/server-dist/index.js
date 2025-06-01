@@ -63,19 +63,25 @@ program
         }
         // Set environment variables from CLI options
         Object.entries(options).forEach(([key, value]) => {
-            if (value !== undefined && key !== 'envFile' && key !== 'oauthSetup') {
+            if (value !== undefined && key !== 'envFile' && key !== 'oauthSetup' && typeof value !== 'function') {
+                // Skip boolean flags that are false or complex objects
+                if (typeof value === 'boolean' && !value)
+                    return;
                 const envKey = key.replace(/([A-Z])/g, '_$1').toUpperCase();
+                const stringValue = typeof value === 'string' ? value :
+                    typeof value === 'number' ? String(value) :
+                        typeof value === 'boolean' ? 'true' : '';
                 if (key.startsWith('confluence')) {
-                    process.env[envKey.replace('CONFLUENCE_', 'CONFLUENCE_')] = String(value);
+                    process.env[envKey.replace('CONFLUENCE_', 'CONFLUENCE_')] = stringValue;
                 }
                 else if (key.startsWith('jira')) {
-                    process.env[envKey.replace('JIRA_', 'JIRA_')] = String(value);
+                    process.env[envKey.replace('JIRA_', 'JIRA_')] = stringValue;
                 }
                 else if (key.startsWith('oauth')) {
-                    process.env[`ATLASSIAN_${envKey.replace('OAUTH_', 'OAUTH_')}`] = String(value);
+                    process.env[`ATLASSIAN_${envKey.replace('OAUTH_', 'OAUTH_')}`] = stringValue;
                 }
                 else {
-                    process.env[envKey] = String(value);
+                    process.env[envKey] = stringValue;
                 }
             }
         });
