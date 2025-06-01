@@ -2,6 +2,16 @@
 
 A high-performance Node.js implementation of the Model Context Protocol (MCP) server for Atlassian products (Jira and Confluence). This server enables AI assistants to interact with your Atlassian instances through a standardized protocol.
 
+## 📥 Downloads
+
+| Type | Description | Link |
+|------|-------------|------|
+| **VS Code Extension** | One-click installation with GUI setup | [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=sethdford.atlassian-mcp-server) |
+| **VSIX Package** | Manual installation file | [Download VSIX](https://github.com/sethdford/mcp-nodejs-atlassian/releases/latest/download/atlassian-mcp-server-1.0.0.vsix) |
+| **Standalone Server** | Command-line MCP server | [GitHub Repository](https://github.com/sethdford/mcp-nodejs-atlassian) |
+
+> **🎯 New to MCP?** Start with the **VS Code Extension** for the easiest setup experience!
+
 ## 🎉 Features
 
 - **Full Confluence Integration**: Search, read, create, and update Confluence pages and spaces
@@ -46,7 +56,13 @@ This is a complete rewrite from the original Python/Docker implementation with s
 
 **🚀 Easiest way to get started:**
 
-1. Install the [Atlassian MCP Server extension](vscode-extension/) from VS Code marketplace
+#### Download & Install
+- **VS Code Marketplace**: Search for "Atlassian MCP Server" in VS Code Extensions
+- **Direct Download**: Get the latest [VSIX package](https://github.com/sethdford/mcp-nodejs-atlassian/releases) 
+- **Manual Install**: Download `atlassian-mcp-server-1.0.0.vsix` from releases and install via VS Code Extensions → Install from VSIX
+
+#### Setup
+1. Install the extension in VS Code
 2. Run `Atlassian: Configure Atlassian MCP` command
 3. Follow the OAuth setup wizard
 4. Start coding with AI integration!

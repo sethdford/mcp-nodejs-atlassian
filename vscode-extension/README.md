@@ -15,9 +15,22 @@ A VS Code extension that seamlessly connects your development environment to Atl
 - **📊 Real-time Status**: Status bar integration showing server health
 - **🎯 AI Integration**: Enable GitHub Copilot and other AI tools to understand your Atlassian data
 
+## 📥 Installation
+
+### Method 1: VS Code Marketplace (Coming Soon)
+1. Open VS Code Extensions (`Cmd/Ctrl + Shift + X`)
+2. Search for "Atlassian MCP Server"
+3. Click "Install"
+
+### Method 2: Manual Installation (Available Now)
+1. Download the latest [VSIX package](https://github.com/sethdford/mcp-nodejs-atlassian/releases/latest/download/atlassian-mcp-server-1.0.0.vsix)
+2. Open VS Code Extensions (`Cmd/Ctrl + Shift + X`)
+3. Click the `⋯` menu → "Install from VSIX..."
+4. Select the downloaded `.vsix` file
+
 ## 🚀 Quick Start
 
-1. **Install Extension**: Search for "Atlassian MCP Server" in VS Code marketplace
+1. **Install Extension**: Use one of the installation methods above
 2. **Configure Connection**: Run the command `Atlassian: Configure Atlassian MCP`
 3. **OAuth Setup**: Click "OAuth Setup Wizard" for guided authentication
 4. **Start Coding**: Your AI assistant now has access to your Atlassian data!
