@@ -103,7 +103,7 @@ Choose the deployment method that best fits your needs:
 
 | Method | Best For | Pros | Cons |
 |--------|----------|------|------|
-| **Local Node.js** | Development, self-hosted | Full control, no external dependencies, OAuth wizard | Requires local setup |
+| **Local Node.js** | Development, self-hosted, GitHub Copilot | Full control, no external dependencies, OAuth wizard | Requires local setup |
 | **Hosted Service** | Enterprise, managed environments | No local maintenance, centrally managed | Requires hosted endpoint, external dependency |
 
 ### Claude Desktop
@@ -136,9 +136,68 @@ Location: `~/Library/Application Support/Claude/claude_desktop_config.json` (mac
 3. Args: `["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]`
 4. Add environment variables as shown above
 
+### GitHub Copilot Integration
 
+GitHub Copilot can work with MCP servers through VS Code extensions. Here are the recommended approaches:
 
-> **Note**: This configuration uses a hosted MCP service endpoint. Replace the URL, credentials, and tokens with your actual Atlassian instance details.
+#### Option 1: MCP Extension for VS Code
+
+1. Install the MCP extension for VS Code (if available in marketplace)
+2. Configure the MCP server in VS Code settings (`settings.json`):
+
+```json
+{
+  "mcp.servers": {
+    "atlassian": {
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"],
+      "env": {
+        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
+        "CONFLUENCE_USERNAME": "your.email@company.com",
+        "CONFLUENCE_API_TOKEN": "your_confluence_api_token",
+        "JIRA_URL": "https://your-company.atlassian.net",
+        "JIRA_USERNAME": "your.email@company.com",
+        "JIRA_API_TOKEN": "your_jira_api_token"
+      }
+    }
+  }
+}
+```
+
+#### Option 2: HTTP Transport for VS Code Integration
+
+1. Start the server with HTTP transport:
+```bash
+npm start -- --transport sse --port 8000 --host localhost
+```
+
+2. Configure VS Code to connect to the HTTP endpoint:
+```json
+{
+  "mcp.servers": {
+    "atlassian": {
+      "url": "http://localhost:8000/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+#### Option 3: Custom VS Code Extension
+
+For advanced integration, you can create a custom VS Code extension that:
+- Starts the MCP server automatically
+- Provides Copilot with context from Atlassian APIs
+- Enables intelligent code suggestions based on Jira issues and Confluence docs
+
+Example usage in VS Code with Copilot:
+```typescript
+// Copilot can now access your Atlassian data for context
+// Ask: "Create a function to handle the issue PROJ-123"
+// Ask: "Generate tests based on requirements in Confluence page 'API Specs'"
+```
+
+> **Note**: MCP integration with GitHub Copilot is evolving. Check the latest VS Code marketplace for MCP extensions and GitHub's documentation for the most current integration methods.
 
 ## Available Tools
 
