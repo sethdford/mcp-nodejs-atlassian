@@ -42,7 +42,16 @@ This is a complete rewrite from the original Python/Docker implementation with s
 
 ## Quick Start
 
-### 1. Installation
+### Option 1: VS Code Extension (Recommended)
+
+**🚀 Easiest way to get started:**
+
+1. Install the [Atlassian MCP Server extension](vscode-extension/) from VS Code marketplace
+2. Run `Atlassian: Configure Atlassian MCP` command
+3. Follow the OAuth setup wizard
+4. Start coding with AI integration!
+
+### Option 2: Standalone Server
 
 ```bash
 # Clone and install
@@ -54,7 +63,7 @@ chmod +x install.sh && ./install.sh
 npm install && npm run build
 ```
 
-### 2. Authentication Setup
+### Authentication Setup
 
 **🔥 OAuth 2.0 (Recommended for Cloud)**
 
@@ -83,7 +92,7 @@ JIRA_URL=https://jira.your-company.com
 JIRA_PERSONAL_TOKEN=your_jira_pat
 ```
 
-### 3. Start the Server
+### Start the Server
 
 ```bash
 # Default stdio transport (for IDE integration)
