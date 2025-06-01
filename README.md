@@ -99,6 +99,13 @@ npm start -- --verbose --read-only --enabled-tools "confluence_search,jira_get_i
 
 ## IDE Integration
 
+Choose the deployment method that best fits your needs:
+
+| Method | Best For | Pros | Cons |
+|--------|----------|------|------|
+| **Local Node.js** | Development, self-hosted | Full control, no external dependencies, OAuth wizard | Requires local setup |
+| **Hosted Service** | Enterprise, managed environments | No local maintenance, centrally managed | Requires hosted endpoint, external dependency |
+
 ### Claude Desktop
 
 Location: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
@@ -128,6 +135,36 @@ Location: `~/Library/Application Support/Claude/claude_desktop_config.json` (mac
 2. Command: `node`
 3. Args: `["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]`
 4. Add environment variables as shown above
+
+### Alternative: Hosted MCP Service Configuration
+
+For environments where you prefer a hosted service approach, you can use this configuration:
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "atlassian": {
+        "url": "https://mcp.atlassian.com/v1/sse",
+        "transport": "sse",
+        "command": "mcp-atlassian",
+        "args": [
+          "--jira-url", "https://your-company.atlassian.net",
+          "--jira-username", "your.email@company.com", 
+          "--jira-token", "your_api_token",
+          "--confluence-url", "https://your-company.atlassian.net/wiki",
+          "--confluence-username", "your.email@company.com",
+          "--confluence-token", "your_api_token"
+        ],
+        "env": {},
+        "disabled": false
+      }
+    }
+  }
+}
+```
+
+> **Note**: This configuration uses a hosted MCP service endpoint. Replace the URL, credentials, and tokens with your actual Atlassian instance details.
 
 ## Available Tools
 
