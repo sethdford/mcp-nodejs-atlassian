@@ -156,26 +156,27 @@ Ask your AI assistant:
 - *"Find all my open tickets from last sprint"*
 - *"Update PROJ-456 status to In Progress"*
 
-## 🐳 Docker Deployment
+## 🖥️ Server Deployment
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist/ ./dist/
-EXPOSE 8000
-CMD ["node", "dist/index.js", "--transport", "sse", "--port", "8000", "--host", "0.0.0.0"]
-```
+For production server deployment:
 
 ```bash
-docker build -t mcp-atlassian .
-docker run -p 8000:8000 \
-  -e CONFLUENCE_URL="https://company.atlassian.net/wiki" \
-  -e CONFLUENCE_API_TOKEN="your_token" \
-  -e JIRA_URL="https://company.atlassian.net" \
-  -e JIRA_API_TOKEN="your_token" \
-  mcp-atlassian
+# Install on server
+git clone https://github.com/your-username/mcp-nodejs-atlassian.git
+cd mcp-nodejs-atlassian
+npm ci --only=production
+npm run build
+
+# Set up environment
+cp env.example .env
+# Edit .env with production credentials
+
+# Run with process manager (recommended)
+npm install -g pm2
+pm2 start dist/index.js --name "mcp-atlassian" -- --transport sse --port 8000 --host 0.0.0.0
+
+# Or run directly
+node dist/index.js --transport sse --port 8000 --host 0.0.0.0
 ```
 
 ## 🏢 Enterprise Features
@@ -186,7 +187,7 @@ docker run -p 8000:8000 \
 - ✅ **Read-only mode** - Safe operations
 - ✅ **Access filtering** - Limit spaces/projects
 - ✅ **Multiple transports** - stdio, SSE, HTTP
-- ✅ **Docker ready** - Container deployment
+- ✅ **Process management** - PM2/systemd compatible
 
 ## 🛠️ Development
 

@@ -58,8 +58,8 @@ body:
     id: version
     attributes:
       label: mcp-atlassian Version
-      description: Which version of `mcp-atlassian` are you using? (Check `pip show mcp-atlassian` or `pyproject.toml`)
-      placeholder: "e.g., 0.6.5"
+      description: Which version of `mcp-atlassian` are you using? (Check `package.json` or `npm list`)
+      placeholder: "e.g., 1.0.0"
     validations:
       required: true
   - type: dropdown
@@ -68,9 +68,9 @@ body:
       label: Installation Method
       description: How did you install `mcp-atlassian`?
       options:
-        - From PyPI (pip install mcp-atlassian / uv add mcp-atlassian)
         - From source (git clone)
-        - Docker
+        - Node.js Server Deployment
+        - CLI/Wizard Setup
         - Other
     validations:
       required: true
@@ -87,11 +87,11 @@ body:
     validations:
       required: true
   - type: input
-    id: python-version
+    id: node-version
     attributes:
-      label: Python Version
-      description: What version of Python are you using? (`python --version`)
-      placeholder: "e.g., 3.11.4"
+      label: Node.js Version
+      description: What version of Node.js are you using? (`node --version`)
+      placeholder: "e.g., v18.17.0"
     validations:
       required: true
   - type: dropdown

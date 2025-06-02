@@ -411,12 +411,39 @@ sudo systemctl start mcp-atlassian
 - Configure proper firewall rules
 - Store credentials securely (not in version control)
 
-## Migration from Docker Version
+## Enterprise Deployment
 
-1. **Remove Docker configuration** from IDE
-2. **Install Node.js version**: `npm install && npm run build`
-3. **Update IDE config** to use `node dist/index.js`
-4. **Test functionality**: `npm start -- --help`
-5. **Environment variables** remain compatible
+### Production Setup
 
-All features from the Docker version are now available in this Node.js implementation with additional enhancements for OAuth setup, HTTP transports, and improved development experience. 
+1. **Server Installation**:
+```bash
+git clone https://github.com/your-username/mcp-nodejs-atlassian.git
+cd mcp-nodejs-atlassian
+npm ci --only=production
+npm run build
+```
+
+2. **Environment Configuration**:
+```bash
+cp env.example .env
+# Configure production credentials
+```
+
+3. **Process Management**:
+```bash
+# Using PM2 (recommended)
+npm install -g pm2
+pm2 start dist/index.js --name mcp-atlassian -- --transport sse --port 8000
+
+# Using systemd
+sudo systemctl start mcp-atlassian
+```
+
+4. **Monitoring & Health Checks**:
+```bash
+# PM2 monitoring
+pm2 monit
+
+# Health endpoint
+curl http://localhost:8000/health
+``` 
