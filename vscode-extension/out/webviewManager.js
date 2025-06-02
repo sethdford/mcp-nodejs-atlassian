@@ -59,6 +59,14 @@ class WebviewManager {
                         config: currentConfig
                     });
                     break;
+                case 'oauthSetup':
+                    // Trigger OAuth setup wizard
+                    vscode.commands.executeCommand('atlassianMcp.oauthSetup');
+                    panel.webview.postMessage({
+                        command: 'oauthStarted',
+                        message: 'OAuth setup wizard started. Please follow the instructions in the popup.'
+                    });
+                    break;
             }
         }, undefined, this.context.subscriptions);
     }
@@ -187,6 +195,10 @@ class WebviewManager {
                 .status.error {
                     background-color: var(--vscode-testing-iconFailed);
                     color: var(--vscode-editor-background);
+                }
+                .status.info {
+                    background-color: var(--vscode-button-background);
+                    color: var(--vscode-button-foreground);
                 }
                 .help-text {
                     font-size: 0.9em;
@@ -334,6 +346,8 @@ class WebviewManager {
                         
                         // Trigger change event to show/hide appropriate fields
                         document.getElementById('authMethod').dispatchEvent(new Event('change'));
+                    } else if (message.command === 'oauthStarted') {
+                        showStatus(message.message, 'info');
                     }
                 });
             </script>
