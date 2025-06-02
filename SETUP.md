@@ -56,8 +56,23 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "atlassian": {
-      "command": "node",
-      "args": ["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]
+      "command": "npx",
+      "args": ["mcp-atlassian-nodejs"]
+    }
+  }
+}
+```
+
+**For cleaner setup (optional):**
+```bash
+npm install -g ./
+```
+Then use:
+```json
+{
+  "mcpServers": {
+    "atlassian": {
+      "command": "mcp-atlassian"
     }
   }
 }
@@ -66,8 +81,12 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ### Cursor
 
 1. Settings → MCP → Add global MCP server
-2. **Command**: `node`
-3. **Args**: `["/absolute/path/to/dist/index.js"]`
+2. **Command**: `npx`
+3. **Args**: `["mcp-atlassian-nodejs"]`
+
+**Alternative (after global install):**
+- **Command**: `mcp-atlassian`
+- **Args**: `[]`
 
 ## 🔧 Alternative: API Tokens
 

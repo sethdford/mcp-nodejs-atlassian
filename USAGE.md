@@ -139,8 +139,30 @@ Features:
 {
   "mcpServers": {
     "mcp-atlassian": {
-      "command": "node",
-      "args": ["/absolute/path/to/mcp-atlassian/dist/index.js"],
+      "command": "npx",
+      "args": ["mcp-atlassian-nodejs"],
+      "env": {
+        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
+        "CONFLUENCE_USERNAME": "your.email@company.com",
+        "CONFLUENCE_API_TOKEN": "your_confluence_api_token",
+        "JIRA_URL": "https://your-company.atlassian.net",
+        "JIRA_USERNAME": "your.email@company.com",
+        "JIRA_API_TOKEN": "your_jira_api_token"
+      }
+    }
+  }
+}
+```
+
+**Alternative with global install:**
+```bash
+npm install -g ./
+```
+```json
+{
+  "mcpServers": {
+    "mcp-atlassian": {
+      "command": "mcp-atlassian",
       "env": {
         "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
         "CONFLUENCE_USERNAME": "your.email@company.com",
@@ -158,9 +180,14 @@ Features:
 
 1. Open Settings → MCP
 2. Add new global MCP server
-3. Command: `node`
-4. Args: `["/absolute/path/to/mcp-atlassian/dist/index.js"]`
+3. Command: `npx`
+4. Args: `["mcp-atlassian-nodejs"]`
 5. Add environment variables as shown above
+
+**Alternative with global install:**
+1. Run: `npm install -g ./`
+2. Command: `mcp-atlassian`
+3. Args: `[]`
 
 ### HTTP Transport Integration
 

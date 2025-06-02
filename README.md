@@ -13,11 +13,20 @@ npm install && npm run build
 # 2. Set up OAuth (interactive wizard)
 npm run oauth-setup
 
-# 3. Start the server
-npm start
+# 3. (Optional) Install globally for easier access
+npm install -g ./
+
+# 4. Now use with any MCP client via npx or global command
+npx mcp-atlassian-nodejs --help
+# OR (if globally installed)
+mcp-atlassian --help
 ```
 
-Your MCP server is now running and ready to connect to AI assistants!
+Now you can use the server in any MCP-compatible client without hardcoded paths!
+
+**Two ways to use:**
+- **With npx:** `npx mcp-atlassian-nodejs` (no global install needed)
+- **Globally:** `mcp-atlassian` (after `npm install -g ./`)
 
 ## 🔧 Authentication
 
@@ -76,8 +85,23 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "atlassian": {
-      "command": "node",
-      "args": ["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]
+      "command": "npx",
+      "args": ["mcp-atlassian-nodejs"]
+    }
+  }
+}
+```
+
+**Alternative:** Global install for cleaner setup:
+```bash
+npm install -g ./
+```
+Then use:
+```json
+{
+  "mcpServers": {
+    "atlassian": {
+      "command": "mcp-atlassian"
     }
   }
 }
@@ -86,8 +110,12 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ### Cursor
 
 1. Settings → MCP → Add global MCP server
-2. **Command:** `node`
-3. **Args:** `["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]`
+2. **Command:** `npx`
+3. **Args:** `["mcp-atlassian-nodejs"]`
+
+**Alternative:** After global install (`npm install -g ./`):
+- **Command:** `mcp-atlassian`
+- **Args:** `[]`
 
 ### Any MCP Client
 
