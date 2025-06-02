@@ -41,7 +41,7 @@ npm run oauth-setup
 
 ### Manual Setup (Alternative)
 
-For API tokens or server deployments:
+For API tokens, server deployments, or advanced configuration:
 
 ```bash
 cp env.example .env
