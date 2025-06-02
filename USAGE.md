@@ -5,10 +5,6 @@
 ### 1. Installation
 
 ```bash
-# Run the installation script
-chmod +x install.sh && ./install.sh
-
-# Or manually:
 npm install && npm run build
 ```
 

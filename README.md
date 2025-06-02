@@ -5,20 +5,21 @@ A simple, command-line Model Context Protocol (MCP) server for Atlassian Jira an
 ## 🚀 Quick Start
 
 ```bash
-# 1. Install
+# 1. Clone and install
 git clone https://github.com/your-username/mcp-nodejs-atlassian.git
 cd mcp-nodejs-atlassian
 npm install && npm run build
 
-# 2. Set up OAuth (interactive wizard)
+# 2. Set up authentication (interactive wizard)
 npm run oauth-setup
 
-# 3. (Optional) Install globally for easier access
-npm install -g ./
-
-# 4. Now use with any MCP client via npx or global command
+# 3. Ready to use!
 npx mcp-atlassian-nodejs --help
-# OR (if globally installed)
+```
+
+**Optional:** Install globally for cleaner commands:
+```bash
+npm install -g ./
 mcp-atlassian --help
 ```
 
