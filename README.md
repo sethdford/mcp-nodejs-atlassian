@@ -1,84 +1,69 @@
-# MCP Atlassian Server (Node.js)
+# MCP Atlassian Server
 
-A Model Context Protocol (MCP) server that provides AI assistants with read and write access to Atlassian Jira and Confluence. This implementation offers a **simple command-line setup** with OAuth 2.0 support for secure authentication.
+A simple, command-line Model Context Protocol (MCP) server for Atlassian Jira and Confluence. Connect any MCP-compatible AI assistant to your Atlassian instance with OAuth 2.0 authentication.
 
-## 🚀 Quick Start (5 minutes)
+## 🚀 Quick Start
 
-1. **Clone and install:**
 ```bash
+# 1. Install
 git clone https://github.com/your-username/mcp-nodejs-atlassian.git
 cd mcp-nodejs-atlassian
-npm install
-npm run build
-```
+npm install && npm run build
 
-2. **Set up OAuth authentication (recommended):**
-```bash
+# 2. Set up OAuth (interactive wizard)
 npm run oauth-setup
-```
-This launches an interactive wizard that:
-- Walks you through creating an Atlassian OAuth app
-- Handles the complete OAuth flow in your browser
-- Auto-generates all configuration variables
-- Updates your `.env` file automatically
 
-3. **Start the MCP server:**
-```bash
+# 3. Start the server
 npm start
 ```
 
-That's it! Your MCP server is now running and ready to integrate with AI assistants.
+Your MCP server is now running and ready to connect to AI assistants!
 
-## 🔧 Authentication Options
+## 🔧 Authentication
 
-### Option 1: OAuth 2.0 Setup (Recommended)
+### OAuth 2.0 (Recommended)
 
-The OAuth setup wizard makes authentication simple:
+Run the interactive OAuth setup wizard:
 
 ```bash
 npm run oauth-setup
 ```
 
 **What it does:**
-- Guides you through creating an OAuth app in Atlassian Developer Console
-- Opens your browser for secure authorization
-- Automatically exchanges tokens and detects your Cloud ID
-- Generates all required environment variables
-- No manual configuration needed!
+- Walks you through creating an Atlassian OAuth app
+- Opens your browser for secure authorization  
+- Auto-detects your Cloud ID
+- Generates all configuration automatically
 
 **Requirements:**
-- An Atlassian Cloud account
-- 2 minutes to create an OAuth app
-- Port 8080 available for the callback server
+- Atlassian Cloud account
+- Port 8080 available for callback
 
-### Option 2: Manual API Token Setup
+### Manual Setup (Alternative)
 
-If you prefer manual setup or need API tokens:
+For API tokens or server deployments:
 
 ```bash
-# Copy the example environment file
 cp env.example .env
-
 # Edit .env with your credentials
-# Get tokens from: https://id.atlassian.com/manage-profile/security/api-tokens
 ```
 
-**For Atlassian Cloud:**
+**Atlassian Cloud:**
 ```bash
 CONFLUENCE_URL=https://your-company.atlassian.net/wiki
 CONFLUENCE_USERNAME=your.email@company.com
-CONFLUENCE_API_TOKEN=your_confluence_api_token
+CONFLUENCE_API_TOKEN=your_api_token
 JIRA_URL=https://your-company.atlassian.net
 JIRA_USERNAME=your.email@company.com
-JIRA_API_TOKEN=your_jira_api_token
+JIRA_API_TOKEN=your_api_token
 ```
 
-**For Atlassian Server/Data Center:**
+**Server/Data Center:**
 ```bash
 CONFLUENCE_URL=https://confluence.your-company.com
-CONFLUENCE_PERSONAL_TOKEN=your_confluence_pat
+CONFLUENCE_PERSONAL_TOKEN=your_personal_token
 JIRA_URL=https://jira.your-company.com
-JIRA_PERSONAL_TOKEN=your_jira_pat
+JIRA_PERSONAL_TOKEN=your_personal_token
 ```
 
 ## 🤖 AI Assistant Integration
@@ -92,142 +77,84 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "atlassian": {
       "command": "node",
-      "args": ["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"],
-      "env": {
-        "CONFLUENCE_URL": "https://your-company.atlassian.net/wiki",
-        "CONFLUENCE_USERNAME": "your.email@company.com", 
-        "CONFLUENCE_API_TOKEN": "your_api_token",
-        "JIRA_URL": "https://your-company.atlassian.net",
-        "JIRA_USERNAME": "your.email@company.com",
-        "JIRA_API_TOKEN": "your_api_token"
-      }
+      "args": ["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]
     }
   }
 }
 ```
 
-### Cursor IDE
+### Cursor
 
-1. Open Settings → MCP → Add new global MCP server
+1. Settings → MCP → Add global MCP server
 2. **Command:** `node`
 3. **Args:** `["/absolute/path/to/mcp-nodejs-atlassian/dist/index.js"]`
-4. **Environment:** Add your Atlassian credentials
 
-### Any MCP-Compatible AI Assistant
+### Any MCP Client
 
-The server uses standard MCP protocols and works with any compatible AI assistant:
+The server supports standard MCP transports:
 
 ```bash
-# Default stdio transport (most common)
+# stdio (default - for most AI assistants)
 npm start
 
-# HTTP Server for web integrations
+# HTTP Server-Sent Events
 npm start -- --transport sse --port 8000
+
+# HTTP Streamable
 npm start -- --transport streamable-http --port 8000
 ```
 
-## 🛠️ Advanced Configuration
+## 🔧 Configuration
 
 ### Command-Line Options
 
 ```bash
-# Get help
-node dist/index.js --help
-
-# OAuth setup wizard
-node dist/index.js --oauth-setup
-
-# Custom environment file
-node dist/index.js --env-file /path/to/custom.env
-
-# Read-only mode (no write operations)
-node dist/index.js --read-only
-
-# Enable specific tools only
-node dist/index.js --enabled-tools "confluence_search,jira_get_issue"
-
-# Verbose logging
-node dist/index.js --verbose
-
-# HTTP transports
-node dist/index.js --transport sse --port 8000
-node dist/index.js --transport streamable-http --port 8000 --path /mcp
+node dist/index.js --help                    # Show all options
+node dist/index.js --oauth-setup             # OAuth wizard
+node dist/index.js --read-only               # Safe mode
+node dist/index.js --verbose                 # Debug logging
+node dist/index.js --enabled-tools "search"  # Limit tools
+node dist/index.js --transport sse --port 8000  # HTTP mode
 ```
 
 ### Environment Variables
 
-You can pass credentials via command line instead of `.env` file:
-
 ```bash
-node dist/index.js \
-  --confluence-url "https://company.atlassian.net/wiki" \
-  --confluence-username "user@company.com" \
-  --confluence-token "your_token" \
-  --jira-url "https://company.atlassian.net" \
-  --jira-username "user@company.com" \
-  --jira-token "your_token"
-```
+# Security
+READ_ONLY_MODE=true              # Disable write operations
+MCP_VERBOSE=true                 # Enable debug logging
 
-### Filtering and Security
+# Filtering  
+CONFLUENCE_SPACES_FILTER=DEV,TEAM,DOC     # Limit Confluence spaces
+JIRA_PROJECTS_FILTER=PROJ,DEV,SUPPORT     # Limit Jira projects
 
-```bash
-# Limit access to specific spaces/projects
-CONFLUENCE_SPACES_FILTER=DEV,TEAM,DOC
-JIRA_PROJECTS_FILTER=PROJ,DEV,SUPPORT
-
-# Read-only mode for safety
-READ_ONLY_MODE=true
-
-# Enable verbose logging
-MCP_VERBOSE=true
+# Tools
+ENABLED_TOOLS=confluence_search,jira_get_issue  # Specific tools only
 ```
 
 ## 📚 Available Tools
 
-Once configured, your AI assistant can:
-
 ### Confluence
-- **confluence_search** - Search across all accessible Confluence content
-- **confluence_get_page** - Retrieve specific pages by ID or title
-- **confluence_create_page** - Create new pages with content
-- **confluence_update_page** - Update existing page content
+- **confluence_search** - Search content across spaces
+- **confluence_get_page** - Get specific pages by ID/title
+- **confluence_create_page** - Create new pages
+- **confluence_update_page** - Update existing pages
 
-### Jira  
-- **jira_search_issues** - Search for issues using JQL
-- **jira_get_issue** - Get detailed issue information
+### Jira
+- **jira_search_issues** - Search issues with JQL
+- **jira_get_issue** - Get detailed issue info
 - **jira_create_issue** - Create new issues
 - **jira_update_issue** - Update existing issues
 
-## 🔍 Usage Examples
+## 💬 Usage Examples
 
-Ask your AI assistant things like:
+Ask your AI assistant:
 
-- *"Search Confluence for API documentation about user authentication"*
-- *"Get the details of Jira issue PROJ-123"*
-- *"Create a new bug report in the MOBILE project"*
-- *"Find all open issues assigned to me in the last sprint"*
-- *"Update the status of PROJ-456 to In Progress"*
-- *"Search for Confluence pages about deployment procedures"*
-
-## 🏢 Enterprise Features
-
-### Authentication Methods
-- ✅ **OAuth 2.0** - Secure, user-delegated access (Cloud)
-- ✅ **API Tokens** - Simple token-based auth (Cloud)  
-- ✅ **Personal Access Tokens** - For Server/Data Center
-- ✅ **Command-line credential passing** - For containerized deployments
-
-### Security & Compliance
-- ✅ **Read-only mode** - Prevent accidental modifications
-- ✅ **Space/Project filtering** - Limit access scope
-- ✅ **Credential isolation** - Environment-based configuration
-- ✅ **Audit logging** - Track all API operations
-
-### Deployment Options
-- ✅ **Local development** - Simple `npm start`
-- ✅ **Containerized** - Docker-ready with environment variables
-- ✅ **HTTP servers** - SSE and Streamable HTTP transports
-- ✅ **Multiple transports** - stdio, SSE, HTTP
+- *"Search Confluence for API documentation"*
+- *"Get details of Jira issue PROJ-123"*
+- *"Create a bug report in the MOBILE project"*
+- *"Find all my open tickets from last sprint"*
+- *"Update PROJ-456 status to In Progress"*
 
 ## 🐳 Docker Deployment
 
@@ -242,7 +169,6 @@ CMD ["node", "dist/index.js", "--transport", "sse", "--port", "8000", "--host", 
 ```
 
 ```bash
-# Build and run
 docker build -t mcp-atlassian .
 docker run -p 8000:8000 \
   -e CONFLUENCE_URL="https://company.atlassian.net/wiki" \
@@ -252,20 +178,38 @@ docker run -p 8000:8000 \
   mcp-atlassian
 ```
 
+## 🏢 Enterprise Features
+
+- ✅ **OAuth 2.0** - Secure delegated access
+- ✅ **API Tokens** - Simple authentication
+- ✅ **Personal Access Tokens** - Server/Data Center support
+- ✅ **Read-only mode** - Safe operations
+- ✅ **Access filtering** - Limit spaces/projects
+- ✅ **Multiple transports** - stdio, SSE, HTTP
+- ✅ **Docker ready** - Container deployment
+
+## 🛠️ Development
+
+```bash
+npm run dev        # Development mode with hot reload
+npm run build      # Build for production
+npm test           # Run tests
+npm run lint       # Code linting
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🔗 Links
 
-- [Model Context Protocol Specification](https://modelcontextprotocol.io/introduction)
-- [Atlassian Developer Documentation](https://developer.atlassian.com/)
-- [OAuth Setup Guide](OAUTH_SETUP_GUIDE.md)
+- [Model Context Protocol](https://modelcontextprotocol.io/introduction)
+- [Atlassian Developer Docs](https://developer.atlassian.com/)
 
 ---
 
-*Made with ❤️ for the MCP community*
+*Simple, powerful Atlassian integration for AI assistants*

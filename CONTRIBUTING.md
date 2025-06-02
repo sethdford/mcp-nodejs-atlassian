@@ -4,38 +4,22 @@ Thank you for your interest in contributing to MCP Atlassian! This document prov
 
 ## Development Setup
 
-1. Make sure you have Python 3.10+ installed
-2. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
-3. Fork the repository
-4. Clone your fork: `git clone https://github.com/YOUR-USERNAME/mcp-atlassian.git`
-5. Add the upstream remote: `git remote add upstream https://github.com/sooperset/mcp-atlassian.git`
-6. Install dependencies:
+1. Make sure you have Node.js 18+ installed
+2. Fork the repository
+3. Clone your fork: `git clone https://github.com/YOUR-USERNAME/mcp-nodejs-atlassian.git`
+4. Add the upstream remote: `git remote add upstream https://github.com/sooperset/mcp-nodejs-atlassian.git`
+5. Install dependencies:
 ```bash
-uv sync --frozen --all-extras --dev
+npm install
 ```
-7. Set up pre-commit hooks:
+6. Set up environment variables:
 ```bash
-pre-commit install
+cp env.example .env
+# Edit .env with your test credentials
 ```
-8. Set up environment variables (copy from .env.example):
+7. Build the project:
 ```bash
-cp .env.example .env
-```
-
-## Development Setup with local VSCode devcontainer
-
-1. Clone your fork: `git clone https://github.com/YOUR-USERNAME/mcp-atlassian.git`
-2. Add the upstream remote: `git remote add upstream https://github.com/sooperset/mcp-atlassian.git`
-3. Open the project with VSCode and open with devcontainer
-4. Add this bit of config to your `.vscode/settings.json`:
-```json
-{
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
-    "[python]": {
-      "editor.defaultFormatter": "charliermarsh.ruff",
-      "editor.formatOnSave": true
-    }
-}
+npm run build
 ```
 
 ## Development Workflow
@@ -49,67 +33,71 @@ git checkout -b fix/issue-description
 
 2. Make your changes
 
-3. Ensure tests pass:
+3. Run development mode for testing:
 ```bash
-uv run pytest
-
-# With coverage
-uv run pytest --cov=mcp_atlassian
+npm run dev
 ```
 
-4. Run code quality checks using pre-commit:
+4. Ensure tests pass:
 ```bash
-pre-commit run --all-files
+npm test
 ```
 
-6. Commit your changes with clear, concise commit messages referencing issues when applicable
+5. Run linting and fix issues:
+```bash
+npm run lint
+npm run lint:fix
+```
 
-7. Submit a pull request to the main branch
+6. Build and test the final version:
+```bash
+npm run build
+npm start -- --help
+```
+
+7. Commit your changes with clear, concise commit messages
+
+8. Submit a pull request to the main branch
 
 ## Code Style
 
-- We use pre-commit hooks to enforce code quality
-- Code quality tools include:
-  - `ruff-format` for code formatting
-  - `ruff` for linting, with configured rules and fixes
-  - `mypy` for type checking, with specific error code configurations
-  - Additional checks for trailing whitespace, file endings, YAML/TOML validity
-- Follow type annotation patterns:
-  - `type[T]` for class types
-  - Union types with pipe syntax: `str | None`
-  - Standard collection types with subscripts: `list[str]`, `dict[str, Any]`
-- Add docstrings to all public modules, functions, classes, and methods using Google-style format:
+- TypeScript with strict type checking
+- ESLint for code quality and consistency  
+- Use proper type annotations
+- Add JSDoc comments for public functions:
 
-```python
-def function_name(param1: str, param2: int) -> bool:
-    """Summary of function purpose.
-
-    More detailed description if needed.
-
-    Args:
-        param1: Description of param1
-        param2: Description of param2
-
-    Returns:
-        Description of return value
-
-    Raises:
-        ValueError: When and why this exception is raised
-    """
+```typescript
+/**
+ * Searches Confluence content using CQL
+ * @param query - The CQL search query
+ * @param limit - Maximum number of results to return
+ * @returns Promise resolving to search results
+ */
+async function searchContent(query: string, limit?: number): Promise<SearchResult[]> {
+    // Implementation
+}
 ```
+
+## Testing
+
+- Add tests for new functionality
+- Ensure all existing tests pass
+- Test OAuth setup wizard manually
+- Test with different transport modes (stdio, SSE, HTTP)
 
 ## Pull Request Process
 
 1. Fill out the PR template with a description of your changes
 2. Ensure all CI checks pass
-3. Request review from maintainers
-4. Address review feedback if requested
+3. Test OAuth setup wizard if authentication changes are made
+4. Request review from maintainers
+5. Address review feedback if requested
 
 ## Release Process
 
 Releases follow semantic versioning:
 - **MAJOR** version for incompatible API changes
-- **MINOR** version for backwards-compatible functionality additions
+- **MINOR** version for backwards-compatible functionality additions  
 - **PATCH** version for backwards-compatible bug fixes
 
 ---
