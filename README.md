@@ -14,7 +14,7 @@ npm install && npm run build
 npm run oauth-setup
 
 # 3. Ready to use!
-npx mcp-atlassian-nodejs --help
+npx mcp-atlassian --help
 ```
 
 **Optional:** Install globally for cleaner commands:
@@ -26,7 +26,7 @@ mcp-atlassian --help
 Now you can use the server in any MCP-compatible client without hardcoded paths!
 
 **Two ways to use:**
-- **With npx:** `npx mcp-atlassian-nodejs` (no global install needed)
+- **With npx:** `npx mcp-atlassian` (no global install needed)
 - **Globally:** `mcp-atlassian` (after `npm install -g ./`)
 
 ## 🔧 Authentication
@@ -87,7 +87,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "atlassian": {
       "command": "npx",
-      "args": ["mcp-atlassian-nodejs"]
+      "args": ["mcp-atlassian"]
     }
   }
 }
@@ -112,7 +112,7 @@ Then use:
 
 1. Settings → MCP → Add global MCP server
 2. **Command:** `npx`
-3. **Args:** `["mcp-atlassian-nodejs"]`
+3. **Args:** `["mcp-atlassian"]`
 
 **Alternative:** After global install (`npm install -g ./`):
 - **Command:** `mcp-atlassian`
