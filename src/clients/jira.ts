@@ -58,7 +58,7 @@ export class JiraClient {
         params.jql = `project in (${projects}) AND (${jql})`;
       }
 
-      const response = await this.client.get('/rest/api/2/search', { params });
+      const response = await this.client.get('/rest/api/3/search/jql', { params });
       
       this.logger.debug(`Search completed: ${response.data.issues?.length || 0} issues found`);
       return response.data;
